@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GoogleAnaliticsService } from './services/google-analitics.service';
 
+// Factory provider for Angular. Provides function to be executed on Angular application startup
 export const GoogleAnaliticsServiceFactory = (gas: GoogleAnaliticsService) => {
   return () => {
     // download

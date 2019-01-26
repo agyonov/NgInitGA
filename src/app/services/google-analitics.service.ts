@@ -22,18 +22,20 @@ export class GoogleAnaliticsService {
     @Inject(DOCUMENT) private dom: Document) {
   }
 
+  // Send page view event to Google Analytics
   public send(pageUrl: string): void {
     // Send
     window.ga('set', 'page', pageUrl);
     window.ga('send', 'pageview');
   }
 
+  // Init the GA infrastructure
   public loadScript(): void {
     // Check already loaded
     if (!this.googleAnaliticsScript.loaded) {
       // Check if we are at browser
       if (isPlatformBrowser(this.platformId)) {
-        // Create new element
+        // Create new scipt element
         const scriptElm: HTMLScriptElement = this.dom.createElement('script');
         scriptElm.src = this.googleAnaliticsScript.url;
         scriptElm.type = 'text/javascript';
@@ -43,11 +45,11 @@ export class GoogleAnaliticsService {
           this.googleAnaliticsScript.loaded = true;
         };
 
-        // set it
+        // Define GA object
         window.ga = window.ga || function () { (window.ga.q = window.ga.q || []).push(arguments); };
         window.ga.l = +new Date;
 
-        // Set some stuff
+        // Set some Google Analytics stuff
         window.ga('create', environment.propertyID, 'auto');
 
         // Add to document

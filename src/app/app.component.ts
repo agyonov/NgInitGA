@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Set that the user was here
     this.gas.send('/');
   }
 }
