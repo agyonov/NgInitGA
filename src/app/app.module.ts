@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, PLATFORM_INITIALIZER } from '@angular/core';
+import { NgModule, PLATFORM_INITIALIZER, APP_INITIALIZER } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -21,7 +21,13 @@ export const GoogleAnaliticsServiceFactory = (gas: GoogleAnaliticsService) => {
     AppRoutingModule
   ],
   providers: [
-    { provide: PLATFORM_INITIALIZER, useFactory: GoogleAnaliticsServiceFactory, deps: [GoogleAnaliticsService], multi: true }
+    // Provides function to be executed on Angular application startup
+    {
+      provide: APP_INITIALIZER,
+      useFactory: GoogleAnaliticsServiceFactory,
+      deps: [GoogleAnaliticsService],
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

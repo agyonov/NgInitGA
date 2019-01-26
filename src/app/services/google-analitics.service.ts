@@ -20,9 +20,6 @@ export class GoogleAnaliticsService {
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object,
     @Inject(DOCUMENT) private dom: Document) {
-
-    // Call initially
-    this.loadScript();
   }
 
   public send(pageUrl: string): void {
