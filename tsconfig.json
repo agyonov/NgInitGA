@@ -17,6 +17,14 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ga-lib": [
+        "dist/ga-lib"
+      ],
+      "ga-lib/*": [
+        "dist/ga-lib/*"
+      ]
+    }
   }
 }
