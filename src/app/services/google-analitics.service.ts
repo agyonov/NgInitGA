@@ -29,6 +29,12 @@ export class GoogleAnaliticsService {
     window.ga('send', 'pageview');
   }
 
+  // Send event tracking event to Google Analytics
+  public event(eventCategory: string, eventAction: string): void {
+    // Send
+    window.ga('send', 'event', eventCategory, eventAction);
+  }
+
   // Init the GA infrastructure
   public loadScript(): void {
     // Check already loaded

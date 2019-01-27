@@ -133,41 +133,6 @@
           }
         }
       }
-    },
-    "ga-lib": {
-      "root": "projects/ga-lib",
-      "sourceRoot": "projects/ga-lib/src",
-      "projectType": "library",
-      "prefix": "lib",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
-          "options": {
-            "tsConfig": "projects/ga-lib/tsconfig.lib.json",
-            "project": "projects/ga-lib/ng-package.json"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/ga-lib/src/test.ts",
-            "tsConfig": "projects/ga-lib/tsconfig.spec.json",
-            "karmaConfig": "projects/ga-lib/karma.conf.js"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/ga-lib/tsconfig.lib.json",
-              "projects/ga-lib/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        }
-      }
     }
   },
   "defaultProject": "NgInit"

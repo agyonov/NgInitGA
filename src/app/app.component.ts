@@ -11,11 +11,14 @@ export class AppComponent implements OnInit {
   title = 'NgInit';
 
   constructor(private gas: GoogleAnaliticsService) {
-
   }
 
   ngOnInit(): void {
-    // Set that the user was here
-    this.gas.send('/');
+  }
+
+  // Button click event handler
+  clEvent(): void {
+    // Send event to google analytics
+    this.gas.event('softPage', 'Just an Event');
   }
 }

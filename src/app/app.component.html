@@ -1,17 +1,15 @@
-<!--The content below is only a placeholder and can be replaced.-->
 <nav class="navbar navbar-light bg-light">
   <span class="navbar-brand">NgInit</span>
   <ul class="nav">
     <li class="nav-item">
-      <a class="nav-link" href="#">Active</a>
+      <a class="nav-link" routerLinkActive="active" routerLink="home">Home</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="#">Link</a>
+      <a class="nav-link" routerLinkActive="active" routerLink="page-2">Second Page</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="#">Link</a>
+      <button type="button" class="btn btn-info" (click)="clEvent()">Just an Event</button>
     </li>
   </ul>
 </nav>
-
 <router-outlet></router-outlet>
