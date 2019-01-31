@@ -1,0 +1,255 @@
+<div>
+</div>
+<div style="text-align: justify;">
+  In the first part of this post, the discussion was focused mainly around the different methods of dynamic download of
+  a third-party JavaScript library in an <em>Angular</em> application. Here in this second post, we will be discussing
+  the ways in which we can hook to the initialization of the <em>Angular</em> application and to fulfill our
+  programming logic. For illustration I will continue to use the example application from the first part, which I will
+  quote again in several places in the current post.
+</div>
+<ul>
+  <li>
+    The code for the example application is available at: <a href="https://github.com/agyonov/NgInitGA">https://github.com/agyonov/NgInitGA</a>
+  </li>
+  <li>
+    The app itself is live on: <a href="https://agyonov.github.io/NgInitGA">https://agyonov.github.io/NgInitGA</a>
+  </li>
+</ul>
+<div style="text-align: justify;">
+  For those who have not read the first part or have forgotten it, the example is using <em>Google Analytics</em> and
+  to make the example more meaningful it is extended to allow for full tracking of users' actions in the <em>Angular</em>
+  application.
+</div>
+<br />
+<div style="text-align: justify;">
+  <strong>NB:</strong> As for tracking of users in <em>Angular</em> application, it has great, ready-made libraries,
+  such as <a href="https://github.com/angulartics/angulartics2">angulartics2</a>, which you can use. Here the question
+  is not to create another such library, but with an example to show a possible solution to the two questions set at
+  the beginning of this post!
+</div>
+<h2>
+  Hook to initialization of an Angular application</h2>
+<div style="text-align: justify;">
+  I have found several methods to run your initialization program logic (your script) when launching the <em>Angular</em>
+  application in the browser. I will list here two of them in short, and the third one I will look at a little more
+  closely.
+</div>
+<h3>
+  First - Use the "forRoot" static method</h3>
+<div style="text-align: justify;">
+  If you have a service in a separate <em>Angular</em> "feature" module, then perhaps the best and most established way
+  is to use a static "forRoot" method. The method is called when you import your "feature” module into the main module
+  of the <em>Angular</em> application.
+</div>
+<br />
+<div style="text-align: justify;">
+  You can read in more detail at:
+</div>
+<ul>
+  <li><a href="https://angular.io/guide/singleton-services#forroot">https://angular.io/guide/singleton-services#forroot</a></li>
+  <li><a href="https://medium.com/@chrishouse/when-to-use-angulars-forroot-method-400094a0ebb7">When to use Angular’s
+      forRoot() method</a></li>
+</ul>
+<h3>
+  Second - calling your script in the <em>ngOnInit</em> method of the main AppComponent</h3>
+<div style="text-align: justify;">
+  The most direct and not complicated method is to run the script in the <i>ngOnInit</i> method of the main <i>AppComponent</i>
+  in your <em>Angular</em> application. If it works, apply it. If we use the example from the first part of the
+  publication, we have completed one method-"<i>loadScript</i>". This method should be called from your initialization
+  code to start the download of third-party .js <em>Google Analytics</em> Library. In the <i>app.component.ts</i> code,
+  this would appear as follows:
+</div>
+<pre class="prettyprint"><code class="language-ts">
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
+})
+export class AppComponent implements OnInit {
+
+  title = 'NgInit';
+
+  constructor(private gas: GoogleAnaliticsService) {
+  }
+
+  ngOnInit(): void {
+    // Start down load of JS Library
+    this.gas.loadScript();
+  }
+}
+</code></pre>
+<div style="text-align: justify;">
+  Particularity, in the sample application and the use of <em>Google Analytics</em> for illustration, this technique
+  will work without any problems.
+</div>
+<br />
+<div style="text-align: justify;">
+  <b>A recital against</b> its possible use in other cases is that there would be situations where it would not have
+  done the job ☹. These are the cases where all the initializing logic <b>must have completed its execution before the
+    start</b> of the method <i>ngOnInit</i> or any other code from your application.
+</div>
+<br />
+<div style="text-align: justify;">
+  An example, for such a situation, is to say when you have a<b> mandatory user authentication</b> and it must be
+  completed, successful or not, before any other code from your <i>Angular </i>application is executed.
+</div>
+<br />
+<div style="text-align: justify;">
+  This user authentication scenario, in <i>Angular </i>application, is an interesting topic for which I can write a
+  separate article in the future.
+</div>
+<h3>
+  Third – Using pre-defined in Angular tokens (the most interesting)</h3>
+<div style="text-align: justify;">
+  There is one way to hook to the <i>Angular </i>application initialization process, about which, I believe, the
+  information from the <i>Angular </i>team is shared in an overly "modest" manner. These are the so-called "Predefined
+  tokens" and "Factory providers". Information about them can be found at:
+</div>
+<ul>
+  <li><a href="https://angular.io/guide/dependency-injection-providers#predefined-tokens-and-multiple-providers">https://angular.io/guide/dependency-injection-providers#predefined-tokens-and-multiple-providers</a></li>
+  <li><a href="https://angular.io/guide/dependency-injection-providers#factory-providers">https://angular.io/guide/dependency-injection-providers#factory-providers</a></li>
+</ul>
+<div style="text-align: justify;">
+  In the example application, this approach is implemented into the <i>app.module.ts</i> file, the main module of the
+  <i>Angular</i> application.
+</div>
+<br />
+<div style="text-align: justify;">
+  At the beginning we define "factory" function <b>GoogleAnaliticsServiceFactory</b> and export it! The latter is
+  important from the perspective of <i>TypeScript</i> and <i>AOT</i> compiling the <i>Angular</i> application.
+</div>
+<br />
+<div style="text-align: justify;">
+  The function itself must return another, internal function. That's why it's called factory 😊.
+</div>
+<br />
+<div style="text-align: justify;">
+  The internal function that is returned by <b>GoogleAnaliticsServiceFactory</b> is your code that will be executed
+  when initializing the <i>Angular</i> application. The inner function can return in result <i>void</i> or <i>Promise</i>.
+</div>
+<br />
+<div style="text-align: justify;">
+  <b>Note</b>: If it returns <i>Promise</i>, the <i>Angular</i> app will be blocked until <i>Promise </i>is resolved!
+</div>
+<br />
+<div style="text-align: justify;">
+  The internal function gets as input parameter (via dependency-injection) service <b>GoogleAnaliticsService </b>and
+  executes the "<i>loadScript</i>" method. That's what we were aiming for!
+</div>
+<pre class="prettyprint"><code class="language-ts">
+// Factory provider for Angular. Provides function to be executed 
+// on Angular application startup
+export const GoogleAnaliticsServiceFactory = 
+ (gas: GoogleAnaliticsService) =&gt; {
+  return () =&gt; {
+    // download
+    gas.loadScript();
+  };
+};
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    SecondPageComponent,
+    HomeComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule
+  ],
+  providers: [
+    // Provides function to be executed on Angular 
+    // application startup
+    {
+      provide: APP_INITIALIZER,
+      useFactory: GoogleAnaliticsServiceFactory,
+      deps: [GoogleAnaliticsService],
+      multi: true
+    }
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+</code></pre>
+<div style="text-align: justify;">
+  In the <i>providers </i>array, when defining the <i>AppModule </i>main module of the <i>Angular </i>application, we
+  figuratively "hook" the function defined above to the <i>Angular </i>startup process.
+</div>
+<br />
+<div style="text-align: justify;">
+  This is done by using the pre-defined token <b>APP_INITIALIZER</b>. It identifies all providers marked with it to run
+  before the <i>Angular</i> application is initialized!
+</div>
+<br />
+<div style="text-align: justify;">
+  <b>Note</b> that as <i>dependency </i>(the array <b>deps: [GoogleAnaliticsService]</b>) are listed the objects that
+  <i>Angular </i>bootstrap process must instantiates and submit as parameters to the function that will run when the
+  application starts!
+</div>
+<br />
+<div style="text-align: justify;">
+  And voila! This time for real 😊.
+</div>
+<h3>
+  Example application</h3>
+<div style="text-align: justify;">
+  For assurance that the above code is working, you can look at the live sample application. Try it!
+</div>
+<br />
+<div style="text-align: justify;">
+  The following code samples have also been added to the <b>GoogleAnaliticsService </b>service for accessing <i>Google
+    Analitics</i>:
+</div>
+<pre class="prettyprint"><code class="language-ts">
+  // Send page view event to Google Analytics
+  public send(pageUrl: string): void {
+    // Send
+    window.ga('set', 'page', pageUrl);
+    window.ga('send', 'pageview');
+  }
+
+  // Send event tracking event to Google Analytics
+  public event(eventCategory: string, eventAction: string): void {
+    // Send
+    window.ga('send', 'event', eventCategory, eventAction);
+  }
+
+</code></pre>
+<div style="text-align: justify;">
+  These methods follow the instructions of <i>Google Analytics</i> to work with SPA applications.
+</div>
+<br />
+<div style="text-align: justify;">
+  The methods are used by the <i>Home</i>, <i>Second Page</i> pages and the button <i>Just an Event</i> to send
+  information to <i>Google Analytics</i> about the user's actions.
+</div>
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+  <a href="https://3.bp.blogspot.com/-9D93o4sOJdI/XFGTxcrOt7I/AAAAAAAABxI/MVZuYq-Yt6Y50FuavfiS2NLOK3sqc-gxQCLcBGAs/s1600/1.png"
+    imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="816"
+      data-original-width="1109" height="467" src="https://3.bp.blogspot.com/-9D93o4sOJdI/XFGTxcrOt7I/AAAAAAAABxI/MVZuYq-Yt6Y50FuavfiS2NLOK3sqc-gxQCLcBGAs/s640/1.png"
+      width="640" /></a></div>
+
+<div style="text-align: justify;">
+  Visible from the top screen that:
+</div>
+<ol>
+  <li>The script <i>analytics.js</i> is downloaded by the browser</li>
+  <li>When transitioning from page to page and pressing the button, a post of data to the <i>collect </i>address of <i>Google
+      Analytics</i>, occurs.</li>
+</ol>
+<h3>Summary</h3>
+<div style="text-align: justify;">
+  In these two posts, I have tried to examine and describe in words and examples three different approaches to
+  achieving the objectives of both topics:
+</div>
+<ul>
+  <li>Download a third-party JavaScript library in <i>Angular </i>application</li>
+  <li>Hook to the initialization of an <i>Angular </i>application</li>
+</ul>
+<div style="text-align: justify;">
+  I hope that it will be helpful for you, if you need to program things like above mentioned, to choose an approach
+  that best serves you.
+</div>
+
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?skin=desert"></script>
